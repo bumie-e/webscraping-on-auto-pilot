@@ -20,9 +20,10 @@ jobs:
 
       # Set up Python environment
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10.12'  # Use the Python version you need
+          python-version: '3.10'  # Use the Python version you need
+          cache: 'pip'
 
       # Install dependencies (if any)
       - name: Install dependencies
