@@ -20,7 +20,7 @@ class AutoScrape:
 
         if not os.path.exists('data/categories.csv'):
             # Scrape all categories and store in CSV
-            self.scrape_all_categories(home_url)
+            self.scrape_all_categories()
 
         self.scrape_all_pages()
 
