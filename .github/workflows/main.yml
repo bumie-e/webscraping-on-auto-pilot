@@ -4,7 +4,7 @@ name: Run Web Scrapping AutoPilot Script on Schedule
 on:
   schedule:
     # Runs every day at 9:00 PM UTC
-    - cron: '0 14 * * *'
+    - cron: '0 16 * * *'
     
   # This allows manual triggering if needed
   workflow_dispatch:
