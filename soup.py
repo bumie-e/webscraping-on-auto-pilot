@@ -5,26 +5,30 @@ import os
 from datetime import datetime
 import pandas as pd
 from upload_files import AzureBlob
-from argparse import ArgumentParser
-
-# Base URL for Jumia search results
-home_url = 'https://www.jumia.com.ng/'
+#from argparse import ArgumentParser
+import sys
 
 
 class AutoScrape:
 
     def __init__(self, home_url) -> None:
         #self.base_url = base_url
-        self.home_url = home_url
+        self.home_url =  'https://wikipedia.org' #home_url
 
         if not os.path.exists('data/'):
             os.makedirs('data/')
 
-        if not os.path.exists('data/categories.csv'):
-            # Scrape all categories and store in CSV
-            self.scrape_all_categories()
+        response = requests.get(self.home_url)
+        if response.status_code == 200:
+            print('Website works perfectly!')
+        else:
+            print(f"Failed to retrieve the webpage. Status code: {response.status_code}")
 
-        self.scrape_all_pages()
+        # if not os.path.exists('data/categories.csv'):
+        #     # Scrape all categories and store in CSV
+        #     self.scrape_all_categories()
+
+        # self.scrape_all_pages()
 
 
     # Function to get the total number of pages
@@ -227,17 +231,25 @@ class AutoScrape:
 
 if __name__ == '__main__':
 
-    # Create the parser
-    parser = ArgumentParser()
+    # # Create the parser
+    # parser = ArgumentParser()
     
-    # Add an argument
-    parser.add_argument('FILEPATH', type=str, help="Path to the file you want to upload")
-    parser.add_argument('AZURE_STORAGE_CONNECTION_STRING', type=str, help="Azure storage connection string")
-    parser.add_argument('CONTAINER', type=str, help="Azure storage blob container name")
+    # # Add an argument
+    # parser.add_argument('FILEPATH', type=str, help="Path to the file you want to upload")
+    # parser.add_argument('AZURE_STORAGE_CONNECTION_STRING', type=str, help="Azure storage connection string")
+    # parser.add_argument('CONTAINER', type=str, help="Azure storage blob container name")
     
-    # Parse the arguments
-    args = parser.parse_args()
+    # # Parse the arguments
+    # args = parser.parse_args()
+
+    # Get the arguments passed from Bash
+    FILEPATH = sys.argv[1]
+    CONTAINER = sys.argv[2]
+    AZURE_STORAGE_CONNECTION_STRING = sys.argv[3]
+
+    # Base URL for Jumia search results
+    home_url = 'https://www.jumia.com.ng/'
 
     scrape = AutoScrape(home_url)
-    blob = AzureBlob(args.FILEPATH,  args.CONTAINER, args.AZURE_STORAGE_CONNECTION_STRING)
+    blob = AzureBlob(FILEPATH,  CONTAINER, AZURE_STORAGE_CONNECTION_STRING)
     blob.generate_and_upload_csv()
