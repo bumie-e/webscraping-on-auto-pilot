@@ -18,9 +18,9 @@ class AutoScrape:
         if not os.path.exists('data/'):
             os.makedirs('data/')
 
-        if not os.path.exists('data/categories.csv'):
-            # Scrape all categories and store in CSV
-            self.scrape_all_categories()
+        #if not os.path.exists('data/categories.csv'):
+        # Scrape all categories and store in CSV
+        self.scrape_all_categories()
 
         self.scrape_all_pages()
 
@@ -150,6 +150,7 @@ class AutoScrape:
 
             newest_arrivals_url = category_url + '?sort=newest#catalog-listing'
             response = requests.get(newest_arrivals_url, timeout=60)
+            print(f'Website {newest_arrivals_url} response is {response.status_code }')
             if response.status_code == 200:
                 soup = BeautifulSoup(response.content, "html.parser")
                 total_pages = self.get_total_pages(soup)
@@ -184,6 +185,9 @@ class AutoScrape:
 
 
         response = requests.get(self.home_url, timeout=60)
+
+        print(f'Website {self.home_url} response is {response.status_code }')
+
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, "html.parser")
             
