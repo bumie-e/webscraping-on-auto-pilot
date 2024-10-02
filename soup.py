@@ -13,22 +13,16 @@ class AutoScrape:
 
     def __init__(self, home_url) -> None:
         #self.base_url = base_url
-        self.home_url =  'https://wikipedia.org' #home_url
+        self.home_url = home_url
 
         if not os.path.exists('data/'):
             os.makedirs('data/')
 
-        response = requests.get(self.home_url)
-        if response.status_code == 200:
-            print('Website works perfectly!')
-        else:
-            print(f"Failed to retrieve the webpage. Status code: {response.status_code}")
+        if not os.path.exists('data/categories.csv'):
+            # Scrape all categories and store in CSV
+            self.scrape_all_categories()
 
-        # if not os.path.exists('data/categories.csv'):
-        #     # Scrape all categories and store in CSV
-        #     self.scrape_all_categories()
-
-        # self.scrape_all_pages()
+        self.scrape_all_pages()
 
 
     # Function to get the total number of pages
@@ -155,7 +149,7 @@ class AutoScrape:
         for category_url, category in zip(category_urls, categories):
 
             newest_arrivals_url = category_url + '?sort=newest#catalog-listing'
-            response = requests.get(newest_arrivals_url)
+            response = requests.get(newest_arrivals_url, timeout=60)
             if response.status_code == 200:
                 soup = BeautifulSoup(response.content, "html.parser")
                 total_pages = self.get_total_pages(soup)
@@ -169,7 +163,7 @@ class AutoScrape:
                 for page in range(2, total_pages + 1):
                     page_url = category_url + f'?sort=newest&page={page}#catalog-listing'
                     print(f"Scraping page {page}...")
-                    sub_response = requests.get(page_url)
+                    sub_response = requests.get(page_url, timeout=60)
                     if sub_response.status_code == 200:
                         sub_soup = BeautifulSoup(sub_response.content, "html.parser")
                         self.scrape_page(sub_soup, sub_response, category, csv_writer, page_url)
@@ -189,7 +183,7 @@ class AutoScrape:
         csv_writer.writerow(['Category', 'category_url'])
 
 
-        response = requests.get(self.home_url)
+        response = requests.get(self.home_url, timeout=60)
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, "html.parser")
             
