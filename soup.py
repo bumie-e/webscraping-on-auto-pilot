@@ -11,9 +11,10 @@ import sys
 
 class AutoScrape:
 
-    def __init__(self, home_url) -> None:
+    def __init__(self, home_url, agent) -> None:
         #self.base_url = base_url
         self.home_url = home_url
+        self.agent = agent
 
         if not os.path.exists('data/'):
             os.makedirs('data/')
@@ -149,7 +150,10 @@ class AutoScrape:
         for category_url, category in zip(category_urls, categories):
 
             newest_arrivals_url = category_url + '?sort=newest#catalog-listing'
-            response = requests.get(newest_arrivals_url, timeout=60)
+
+            headers = {'User-Agent': f'{self.agent}'}
+
+            response = requests.get(newest_arrivals_url, headers=headers, timeout=60)
             print(f'Website {newest_arrivals_url} response is {response.status_code }')
             if response.status_code == 200:
                 soup = BeautifulSoup(response.content, "html.parser")
@@ -183,8 +187,9 @@ class AutoScrape:
         # Write the headers
         csv_writer.writerow(['Category', 'category_url'])
 
+        headers = {'User-Agent': f'{self.agent}'}
 
-        response = requests.get(self.home_url, timeout=60)
+        response = requests.get(self.home_url, headers=headers, timeout=60)
 
         print(f'Website {self.home_url} response is {response.status_code }')
 
@@ -244,10 +249,11 @@ if __name__ == '__main__':
     FILEPATH = sys.argv[1]
     CONTAINER = sys.argv[2]
     AZURE_STORAGE_CONNECTION_STRING = sys.argv[3]
+    AGENT = sys.argv[4]
 
     # Base URL for Jumia search results
     home_url = 'https://www.jumia.com.ng/'
 
-    scrape = AutoScrape(home_url)
+    scrape = AutoScrape(home_url, AGENT)
     blob = AzureBlob(FILEPATH,  CONTAINER, AZURE_STORAGE_CONNECTION_STRING)
     blob.generate_and_upload_csv()
