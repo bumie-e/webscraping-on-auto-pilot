@@ -9,11 +9,16 @@ on:
   # This allows manual triggering if needed
   workflow_dispatch:
 
+env:
+  # Setting an environment variable with the value of a configuration variable
+  FILEPATH: ${{ vars.FILEPATH }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+
       # Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -33,5 +38,9 @@ jobs:
 
       # Run the Python script
       - name: Run Python script
+        shell: bash
+        env:
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+          CONTAINER: ${{ secrets.CONTAINER }}
         run: |
-          python soup.py
+          python soup.py "$FILEPATH" "$CONTAINER" "$AZURE_STORAGE_CONNECTION_STRING"
