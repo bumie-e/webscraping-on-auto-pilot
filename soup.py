@@ -4,6 +4,8 @@ import csv
 import os
 from datetime import datetime
 import pandas as pd
+from upload_files import AzureBlob
+from argparse import ArgumentParser
 
 # Base URL for Jumia search results
 home_url = 'https://www.jumia.com.ng/'
@@ -224,4 +226,18 @@ class AutoScrape:
 
 
 if __name__ == '__main__':
+
+    # Create the parser
+    parser = ArgumentParser()
+    
+    # Add an argument
+    parser.add_argument('FILEPATH', type=str, help="Path to the file you want to upload")
+    parser.add_argument('AZURE_STORAGE_CONNECTION_STRING', type=str, help="Azure storage connection string")
+    parser.add_argument('CONTAINER', type=str, help="Azure storage blob container name")
+    
+    # Parse the arguments
+    args = parser.parse_args()
+
     scrape = AutoScrape(home_url)
+    blob = AzureBlob(args.FILEPATH,  args.CONTAINER, args.AZURE_STORAGE_CONNECTION_STRING)
+    blob.generate_and_upload_csv()

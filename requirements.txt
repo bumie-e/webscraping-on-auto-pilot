@@ -2,3 +2,5 @@ autoscraper
 requests 
 beautifulsoup4
 pandas
+azure-storage-blob
+python-dotenv
